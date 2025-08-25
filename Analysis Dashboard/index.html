@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analysis on Recession</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+          <style>
+    body {
+        padding: 20px;
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(to right, #3498db, #2ecc71); 
+        color: #ffffff; 
+        overflow-x: hidden;
+    }
+
+    .plot-container {
+        margin-top: 20px;
+        border: 2px solid #ffffff;
+        padding: 20px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1); 
+        transition: transform 0.3s ease-in-out; 
+    }
+
+    .custom-plot-container {
+        margin-top: 20px;
+        border: 2px solid #ffffff;
+        padding: 20px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1); 
+        transition: transform 0.3s ease-in-out; 
+    }
+
+    .plot-container:hover {
+        transform: scale(1.05); 
+    }
+
+    .navbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80px;
+        background-color: #2c3e50;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar-brand {
+        margin-right: 0 !important;
+        font-size: 32px;
+        font-weight: bold;
+        color: #ffffff;
+        text-decoration: none;
+        letter-spacing: 2px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #ffffff;
+        font-size: 48px;
+        margin-bottom: 30px;
+    }
+
+    h3 {
+        color: #fdcb52; 
+    }
+
+    p {
+        font-style: normal;
+        text-align: center;
+        color: #dfe6e9; 
+        line-height: 1.6;
+    }
+
+    .btn-primary {
+        background-color: #d63031; 
+        border-color: #d63031;
+        font-weight: bold;
+    }
+
+    .btn-primary:hover {
+        background-color: #ff7675; 
+        border-color: #ff7675;
+    }
+
+    label {
+        color: #fdcb52; 
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    input.form-control {
+        width: 48%;
+        padding: 15px;
+        margin: 10px;
+        display: inline-block;
+        border: 2px solid #ffffff;
+        box-sizing: border-box;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+    }
+
+    button.btn {
+        color: #ffffff;
+        font-weight: bold;
+    }
+
+    button.btn-primary {
+        background-color: #d63031;
+        border-color: #d63031;
+    }
+
+    button.btn-primary:hover {
+        background-color: #ff7675;
+        border-color: #ff7675;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        transition: box-shadow 0.3s ease;
+    }
+
+    img:hover {
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .container {
+        padding-top: 70px;
+    }
+    .alert-container {
+    margin-top: 10px;
+}
+
+    .alert {
+        font-size: 16px; 
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .alert-error {
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        color: #a94442;
+    }
+
+    .paragraph-content {
+    
+    font-size: 18px;
+    line-height: 1.6;
+    color: #383636; 
+}
+    .title-quote{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+
+</style>
+
+
+        
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="http://127.0.0.1:5000/">Data Analysis on Recession</a>
+</nav>
+
+<div class="container mt-5">
+    <p class="title-quote">"Recessions can be like storms—unsettling and challenging—but they also clear the air, making way for new growth and opportunities."</p>
+
+    <div class="plot-container" id="dataCountsGraphContainer">
+        <h3>r/politics Comments Over Time</h3>
+        {{ politics_comments_plot|safe }}
+    <!-- Form for Politics Comments with start and end dates -->
+    <form action="{{ url_for('plot_politics_comments_route') }}" method="get">
+       <div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="start_date_dc">Start Date:</label>
+            <input type="date" class="form-control" id="start_date_dc" name="start_date">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="end_date_dc">End Date:</label>
+            <input type="date" class="form-control" id="end_date_dc" name="end_date">
+        </div>
+    </div>
+        <button type="submit" class="btn btn-primary btn-politics">Plot Politics Comments</button>
+    </form>
+    {% with messages = get_flashed_messages(category_filter='politics_comments') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    </div>
+</div>	
+
+    <!-- Data Counts from Different APIs -->
+    <div class="plot-container" id="dataCountsGraphContainer">
+        <h3>Data Counts from Different APIs</h3>
+        {{ data_counts_plot|safe }}
+
+        {% with messages = get_flashed_messages(category_filter='data_counts') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <!-- Form for Data Counts with start and end dates -->
+    <form action="{{ url_for('plot_data_counts_route') }}" method="get">
+        <div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="start_date_dc">Start Date:</label>
+            <input type="date" class="form-control" id="start_date_dc" name="start_date">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="end_date_dc">End Date:</label>
+            <input type="date" class="form-control" id="end_date_dc" name="end_date">
+        </div>
+    </div>
+</div>
+
+        <button type="submit" class="btn btn-primary btn-data-counts">Plot Data Counts</button>
+    </form>      
+</div>
+
+    <!-- Sentiment Analysis Section -->
+    <div class="custom-plot-container">
+        <h1>Sentiment Analysis</h1>
+        <p class="paragraph-content"><b>
+            Unlocking insights from the vast realm of online discussions is a crucial aspect of our data analysis portfolio.
+            Sentiment analysis, a powerful tool in our toolkit, allows us to delve into the emotional nuances within text data, providing valuable perspectives on public opinions and attitudes, Understanding the sentiment expressed, whether it's positive, negative, or neutral.
+        </b>
+        </p>
+        
+    </div>
+        <!-- Form for Sentiment Analysis - Reddit -->
+        <form method="POST" action="/sentiment_analysis_reddit">
+<div class="plot-container">
+<h3>Reddit Sentiment Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='sentiment_reddit') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary" >Submit (Reddit)</button>
+        </form>
+	<!-- Plot Sentiment Analysis - Reddit -->
+        {% if plot_data_reddit %}
+            <div class="plot-container">
+                <h3>Sentiment Analysis Plot - Reddit</h3>
+                <img src="data:image/png;base64,{{ plot_data_reddit }}" alt="Sentiment Analysis Plot Reddit">
+            </div>
+        {% endif %}
+</div>
+
+        <!-- Form for Sentiment Analysis - 4chan -->
+        <form method="POST" action="/sentiment_analysis_4chan">
+<div class="plot-container">
+<h3>4chan Sentiment Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='sentiment_4chan') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (4chan)</button>
+        </form>
+	<!-- Plot Sentiment Analysis - 4chan -->
+        {% if plot_data_4chan %}
+            <div class="plot-container">
+                <h3>Sentiment Analysis Plot - 4chan</h3>
+                <img src="data:image/png;base64,{{ plot_data_4chan }}" alt="Sentiment Analysis Plot 4chan">
+            </div>
+        {% endif %}
+</div>
+        <!-- Form for Sentiment Analysis - YouTube -->
+        <form method="POST" action="/sentiment_analysis_youtube">
+<div class="plot-container">
+<h3>YouTube Sentiment Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='sentiment_youtube') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (YouTube)</button>
+        </form>
+	<!-- Plot Sentiment Analysis - YouTube -->
+        {% if plot_data_youtube %}
+            <div class="plot-container">
+                <h3>Sentiment Analysis Plot - YouTube</h3>
+                <img src="data:image/png;base64,{{ plot_data_youtube }}" alt="Sentiment Analysis Plot YouTube">
+            </div>
+        {% endif %}
+</div>
+        <!-- Form for Sentiment Analysis - Politics -->
+        <form method="POST" action="/sentiment_analysis_politics">
+<div class="plot-container">
+<h3>r/politics Sentiment Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='sentiment_politics') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (Politics)</button>
+        </form>
+        <!-- Plot Sentiment Analysis - Politics -->
+        {% if plot_data_politics %}
+            <div class="plot-container">
+                <h3>Sentiment Analysis Plot - Politics</h3>
+                <img src="data:image/png;base64,{{ plot_data_politics }}" alt="Sentiment Analysis Plot Politics">
+            </div>
+        {% endif %}
+        
+    </div>
+    <!-- Hatespeech Analysis Section -->
+    <div class="custom-plot-container">
+        <h1>Hatespeech Analysis</h1>
+        <p class="paragraph-content"><b> 
+        Moderate hate speech analysis involves a thorough examination of specific words within digital conversations to identify and categorize expressions that
+        may be considered offensive or harmful. Utilizing advanced natural language processing techniques, this analysis aims to understand the sentiments
+        associated with these words, classifying them as either positive or negative based on real-world connotations. The insights derived contribute to
+        addressing online toxicity, promoting a nuanced understanding of hate speech, and facilitating a more informed approach to content moderation</b></p>
+    </div>
+        <!-- Form for Hatespeech Analysis - Reddit -->
+        <form method="POST" action="/hatespeech_analysis_reddit">
+<div class="plot-container">
+<h3>Reddit Hatespeech Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='hatespeech_reddit') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (Reddit)</button>
+        </form>
+        <!-- Plot Hatespeech Analysis - Reddit -->
+        {% if plot_hatespeech_data_reddit %}
+            <div class="plot-container">
+                <h3>Hatespeech Analysis Plot - Reddit</h3>
+                <img src="data:image/png;base64,{{ plot_hatespeech_data_reddit }}" alt="Hatespeech Analysis Plot Reddit">
+            </div>
+        {% endif %}
+</div>
+        <!-- Form for Hatespeech Analysis - 4chan -->
+        <form method="POST" action="/hatespeech_analysis_4chan">
+<div class="plot-container">
+<h3>4chan Hatespeech Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='hatespeech_4chan') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (4chan)</button>
+        </form>
+        <!-- Plot Hatespeech Analysis - 4chan -->
+        {% if plot_hatespeech_data_4chan %}
+            <div class="plot-container">
+                <h3>Hatespeech Analysis Plot - 4chan</h3>
+                <img src="data:image/png;base64,{{ plot_hatespeech_data_4chan }}" alt="Hatespeech Analysis Plot 4chan">
+            </div>
+        {% endif %}
+</div>
+        <!-- Form for Hatespeech Analysis - youtube -->
+        <form method="POST" action="/hatespeech_analysis_youtube">
+<div class="plot-container">
+<h3>YouTube Hatespeech Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='hatespeech_youtube') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (YouTube)</button>
+        </form>
+        <!-- Plot Hatespeech Analysis - youtube -->
+        {% if plot_hatespeech_data_youtube %}
+            <div class="plot-container">
+                <h3>Hatespeech Analysis Plot - youtube</h3>
+                <img src="data:image/png;base64,{{ plot_hatespeech_data_youtube }}" alt="Hatespeech Analysis Plot YouTube">
+            </div>
+        {% endif %}
+</div>
+        <!-- Form for Hatespeech Analysis - politics -->
+        <form method="POST" action="/hatespeech_analysis_politics">
+<div class="plot-container">
+<h3>r/politics Hatespeech Analysis</h3>
+{% with messages = get_flashed_messages(category_filter='hatespeech_politics') %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <form>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="start_date_reddit">Start Date :</label>
+                    <input type="date" id="start_date_reddit" name="start_date" class="form-control" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="end_date_reddit">End Date :</label>
+                    <input type="date" id="end_date_reddit" name="end_date" class="form-control" required>
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn btn-primary">Submit (Politics)</button>
+        </form>
+        <!-- Plot Hatespeech Analysis - politics -->
+        {% if plot_hatespeech_data_politics %}
+            <div class="plot-container">
+                <h3>Hatespeech Analysis Plot - politics</h3>
+                <img src="data:image/png;base64,{{ plot_hatespeech_data_politics }}" alt="Hatespeech Analysis Plot Politics">
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
