@@ -36,19 +36,17 @@ Over 500K+ comments were collected from Reddit, 4chan, YouTube, and r/politics i
 
 📂 Repository Structure
 
-├── Reddit.py                            # Reddit data collection
-├── Youtube_final.py                     # YouTube data collection
-├── chan4.py                             # 4chan data collection
-├── Reddit_4chan_Analysis.py             # Combined ETL pipeline
-├── Youtube_Analysis.py                  # NLP + hate speech analysis
-├── app.py                               # Flask web dashboard
-├── index.html                           # Dashboard front-end
-├── subreddits.csv                       # Subreddit list
-├── Youtube_key.csv                      # API keys (ignored in repo)
-├── config*.py                           # Config files (ignored in repo)
-└── Proj2.ipynb                          # Exploratory analysis notebook
-
-
+├── Reddit.py                 # Reddit data collection
+├── Youtube_final.py          # YouTube data collection
+├── chan4.py                  # 4chan data collection
+├── Reddit_4chan_Analysis.py  # Combined ETL pipeline
+├── Youtube_Analysis.py       # NLP + hate speech analysis
+├── app.py                    # Flask web dashboard
+├── index.html                # Dashboard front-end
+├── subreddits.csv            # Subreddit list
+├── Youtube_key.csv           # API keys (ignored in repo)
+├── config*.py                # Config files (ignored in repo)
+└── Proj2.ipynb               # Exploratory analysis notebook
 ⸻
 
 🚀 Getting Started
