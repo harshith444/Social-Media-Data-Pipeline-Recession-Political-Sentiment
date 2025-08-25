@@ -52,13 +52,13 @@ Over **500K+ comments** were collected from Reddit, 4chan, YouTube, and r/politi
 ├── Youtube_key.csv           # API keys (ignored in repo)
 ├── config*.py                # Config files (ignored in repo)
 └── Proj2.ipynb               # Exploratory analysis notebook🚀 Getting Started
-
+---
 ## Prerequisites
 	•	Python 3.8+
 	•	PostgreSQL (with normalized schema)
 	•	Apache Airflow
 	•	PowerBI Desktop 
-
+---
 ## Installation
 
 git clone https://github.com/<your-username>/<repo-name>.git
@@ -74,20 +74,19 @@ airflow dags trigger social_media_pipeline
 python Reddit.py
 python Youtube_final.py
 python chan4.py
-
-⸻
+---
 
 📈 ##Sample Insights
 	•	Recession-related discussions were 55% positive, despite economic uncertainty.
 	•	4chan hosted the most negative tone (62% negative) vs. YouTube’s higher positivity.
 	•	Political discourse in r/politics showed 90% non-toxic comments, reflecting the impact of strong moderation.
 
-⸻
+---
 
 📚 ##Research Context
 This project supported academic research at Binghamton University on economic discourse and political communication. The framework’s ETL pipeline and normalized database design ensure scalability for future analysis of online extremism and public sentiment.
  
-⸻
+---
 
 🔮 ## Future Work
 	•	Expand ETL to additional platforms (Twitter/X, TikTok).
